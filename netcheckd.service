@@ -1,0 +1,14 @@
+[Unit]
+Description=datadog network checker
+
+[Service]
+Type=simple
+ExecStart=/home/pi/services/netcheck/bin/netcheckd
+WorkingDirectory=/home/pi/services/netcheck/bin
+KillMode=process
+Restart=always
+User=pi
+Group=pi
+
+[Install]
+WantedBy=multi-user.target
