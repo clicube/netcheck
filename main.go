@@ -13,7 +13,7 @@ func main() {
 
 	client, err := statsd.New(
 		"127.0.0.1:8125",
-		statsd.WithNamespace("home.net."),
+		statsd.WithNamespace("home.net.google."),
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -53,7 +53,13 @@ func doCheck(client *statsd.Client) {
 		fmt.Printf("round-trip min/avg/max/stddev = %v/%v/%v/%v\n",
 			stats.MinRtt, stats.AvgRtt, stats.MaxRtt, stats.StdDevRtt)
 
-		client.Gauge("up", float64(1 - stats.PacketLoss), []string{}, 1)
+		var up float64
+		if stats.PacketLoss == 0 {
+			up = 1
+		} else {
+			up = 0
+		}
+		client.Gauge("up", up, []string{}, 1)
 		client.Gauge("avg", float64(stats.AvgRtt/time.Millisecond), []string{}, 1)
 		client.Gauge("min", float64(stats.MinRtt/time.Millisecond), []string{}, 1)
 		client.Gauge("max", float64(stats.MaxRtt/time.Millisecond), []string{}, 1)
